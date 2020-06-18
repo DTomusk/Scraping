@@ -4,7 +4,8 @@ class WikiSpider(scrapy.Spider):
 	name = "wiki"
 	allowed_domains = ['wikipedia.org']
 	start_urls = [
-		'https://www.wikipedia.org/',
+		#'https://www.wikipedia.org/',
+		'https://en.m.wikipedia.org/wiki/Special:Random#/random',
 	]
 
 	# first off, print the title of every page linked to the homepage 
