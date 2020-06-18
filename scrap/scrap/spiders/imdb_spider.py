@@ -32,8 +32,15 @@ class IMDBSpider(scrapy.Spider):
 			self.logger.info("Found %s %s" % (self.arg3, self.arg4))
 		else:
 			self.logger.info(response.css('title').get())	
-			# we want the first every other name not including the first two (which are the actor we just came from)	
+			# we want the first every other name not including the first two (which are the actor we just came from) (this is completely wrong and dumb)	
 			name_codes = response.xpath('//a[contains(@href,"/name/nm")]/@href').getall()
 			for i in range(2, 14, 2):
 				yield scrapy.Request('http://m.imdb.com%s' % name_codes[i], callback=self.parse_actor)
 
+# so far the input format is cumbersome
+# no check to see whether we'd actually find a person with the given name 
+# doesn't store the links leading up to the perosn 
+# only checks the most popular films and top billed cast 
+# should every request come with a route that's been taken so far? 
+# and what about loops? I don't look at the first name in top billed cast but that doesn't make sense
+# the person we're coming from won't necessarily be the top billed 
