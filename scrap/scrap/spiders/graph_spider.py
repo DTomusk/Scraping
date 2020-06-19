@@ -37,11 +37,18 @@ class GraphSpider(scrapy.Spider):
 				pass
 			else:
 				self.graph.new_film(entry_code)
+				self.graph.add_actor_to_film(entry_code, response.meta['code'])
 
-				yield scrapy.Request('http://m.imdb.com%s' % title_codes[i], callback=self.parse_film)
+				yield scrapy.Request('http://m.imdb.com%s' % title_codes[i], callback=self.parse_film, meta={'code':entry_code})
 
 	def parse_film(self, response):
-		pass
+		self.logger.info(response.css('title').get())
+		name_codes = response.xpath('//a[contains(@href,"/name/nm")]/@href').getall()
+		for i in range(0, 12, 2):
+			entry_code = re.sub('name/nm', '', name_codes[i].strip('/'))
+			if not self.graph.graph_contains(name_codes[i], True):
+				self.graph.new_actor(entry_code)
+				self.graph.add_film_to_actor(entry_code, response.meta['code'])
 
 	# copied from documentation 
 	@classmethod

@@ -36,8 +36,8 @@ class Graph:
 
 	def write_graph_to_file(self, filename):
 		f = open(filename, "w")
-		actor_json = json.dumps(self.actors)
-		film_json = json.dumps(self.films)
+		actor_json = json.dumps(self.actors, indent=4)
+		film_json = json.dumps(self.films, indent=4)
 
 		f.write("Actors: ")
 		f.write(actor_json+"\n")
