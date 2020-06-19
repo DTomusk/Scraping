@@ -21,6 +21,19 @@ class Graph:
 	def add_film_to_actor(self, actor, film):
 		self.actors[actor].append(film)
 
+	def graph_contains(self, code, actor):
+		if actor: 
+			if code in self.actors:
+				return True
+			else: 
+				return False
+		else: 
+			if code in self.films:
+				return True
+			else:
+				return False
+
+
 	def write_graph_to_file(self, filename):
 		f = open(filename, "w")
 		actor_json = json.dumps(self.actors)
