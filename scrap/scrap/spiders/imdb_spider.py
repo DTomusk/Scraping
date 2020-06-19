@@ -1,4 +1,5 @@
 # scrape imdb to find connections between actors, go through most known for movies and highest billed cast
+# could produce a graph of titles and actors 
 import scrapy 
 
 class IMDBSpider(scrapy.Spider):
@@ -10,6 +11,10 @@ class IMDBSpider(scrapy.Spider):
 		self.logger.info('Trying')
 		# need to put -a arg1 and -a arg2 in cli
 		yield scrapy.Request('http://m.imdb.com/find?q=%s+%s&ref_=nv_sr_sm' % (self.arg1, self.arg2))
+
+	# gets the target name code or says it can't be found
+	#def get_end(self, response):
+
 
 	def parse(self, response):
 		name_code = response.xpath('//a[contains(@href,"/name/nm")]/@href').get()
@@ -27,14 +32,14 @@ class IMDBSpider(scrapy.Spider):
 
 	def parse_film(self, response):
 		# it will keep going even if arg3 arg4 doesn't exist 
+		# using a wildcard might be inefficient 
 		if response.xpath('//*[contains(strong, "%s %s")]' % (self.arg3, self.arg4)).getall():
 			self.found = True
 			self.logger.info("Found %s %s" % (self.arg3, self.arg4))
 		else:
 			self.logger.info(response.css('title').get())	
-			# we want the first every other name not including the first two (which are the actor we just came from) (this is completely wrong and dumb)	
 			name_codes = response.xpath('//a[contains(@href,"/name/nm")]/@href').getall()
-			for i in range(2, 14, 2):
+			for i in range(0, 12, 2):
 				yield scrapy.Request('http://m.imdb.com%s' % name_codes[i], callback=self.parse_actor)
 
 # so far the input format is cumbersome
@@ -44,3 +49,8 @@ class IMDBSpider(scrapy.Spider):
 # should every request come with a route that's been taken so far? 
 # and what about loops? I don't look at the first name in top billed cast but that doesn't make sense
 # the person we're coming from won't necessarily be the top billed 
+# the start person's name has to be similar enough but the end person's has to be exact 
+# this will most likely get me banned from imdb 
+# can start with a non actor but must end in an actor 
+
+#
