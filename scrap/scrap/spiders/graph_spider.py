@@ -23,19 +23,25 @@ class GraphSpider(scrapy.Spider):
 		# name_code is the url extension to imdb that brings up the actor's page 
 		# this grabs the first name on the search page, which should be the actor we're looking for
 		name_code = response.xpath('//a[contains(@href,"/name/nm")]/@href').get()
+		# this should work but I don't think it's the best request to make 
+		name = response.xpath('//div[@class="media-body media-vertical-align"]/span[@class="h3"]/text()').get()
+		name = re.sub('\n', '', name)
 		# this only contains the numerical part of the code but is still a string 
 		# we could still keep the nm for clarity
 		code = re.sub('name/', '', name_code.strip('/'))
 		self.logger.info(code)
+		self.logger.info(name)
 		# start the graph by adding one empty actor to the actor dictionary 
-		self.graph.new_actor(code)
-		yield scrapy.Request('http://m.imdb.com%s' % name_code, callback=self.parse_actor, meta={'code':code})
+		self.graph.new_actor(code, name)
+		#yield scrapy.Request('http://m.imdb.com%s' % name_code, callback=self.parse_actor, meta={'code':code})
 
 	# takes an actor's page and scrapes the top films there 
 	def parse_actor(self, response):
 		self.logger.info(response.css('title').get())
 		title_codes = response.xpath('//a[contains(@href,"/title/tt")]/@href').getall()
+		titles = response.xpath('//a[contains(@href,"/title/tt")]/text()').getall()
 		# add titles to the dictionary here 
+		# the number of titles per person should be variable, the user could input how many they want
 		for i in range(0, 10, 2):
 			entry_code = re.sub('title/', '', title_codes[i].strip('/'))
 			self.graph.add_film_to_actor(response.meta['code'], entry_code)
@@ -43,7 +49,7 @@ class GraphSpider(scrapy.Spider):
 			if self.graph.graph_contains(title_codes[i], False):
 				pass
 			else:
-				self.graph.new_film(entry_code)
+				self.graph.new_film(entry_code, titles[i])
 				self.graph.add_actor_to_film(entry_code, response.meta['code'])
 
 				yield scrapy.Request('http://m.imdb.com%s' % title_codes[i], callback=self.parse_film, meta={'code':entry_code})
@@ -51,13 +57,12 @@ class GraphSpider(scrapy.Spider):
 	def parse_film(self, response):
 		self.logger.info(response.css('title').get())
 		name_codes = response.xpath('//a[contains(@href,"/name/nm")]/@href').getall()
+		names = response.xpath('//a[contains(@href,"/name/nm")]/text()').getall()
 		for i in range(0, 12, 2):
 			entry_code = re.sub('name/', '', name_codes[i].strip('/'))
 			if not self.graph.graph_contains(name_codes[i], True):
-				self.graph.new_actor(entry_code)
+				self.graph.new_actor(entry_code, names[i])
 				self.graph.add_film_to_actor(entry_code, response.meta['code'])
-				# this should only be called if that actor isn't already under the film
-				# if not self.graph.film_contains(response.meta['code'], entry_code):
 				if not self.graph.film_contains(response.meta['code'], entry_code):
 					self.graph.add_actor_to_film(response.meta['code'], entry_code)
 
@@ -75,3 +80,4 @@ class GraphSpider(scrapy.Spider):
 
 # Should we allow for spelling errors or should we check for them? 
 # at what point should we start implementing a GUI?
+# the user should control how much the graph grows, 

@@ -7,19 +7,19 @@ class Graph:
 		self.actors = {}
 		self.films = {}
 
-	def new_actor(self, code):
-		self.actors[code] = []
+	def new_actor(self, code, name):
+		self.actors[code] = (name, [])
 
-	def new_film(self, code):
-		self.films[code] = []
+	def new_film(self, code, title):
+		self.films[code] = (title, [])
 
 	# here we need to find the right entry and append the code to its list
 	def add_actor_to_film(self, film, actor):
 		# the dictionary stores keys as codes and values as lists of other codes
-		self.films[film].append(actor)
+		self.films[film][1].append(actor)
 
 	def add_film_to_actor(self, actor, film):
-		self.actors[actor].append(film)
+		self.actors[actor][1].append(film)
 
 	def graph_contains(self, code, actor):
 		if actor: 
@@ -36,13 +36,13 @@ class Graph:
 	# do we use these assuming the actor or film already exists, or should we double check that they do?
 	# I feel like we can assume that they exist given the context in which we use them 	
 	def actor_contains(self, actor, film):
-		if film in self.actors[actor]:
+		if film in self.actors[actor][1]:
 			return True
 		else:
 			return False 
 
 	def film_contains(self, film, actor):
-		if actor in self.films[film]:
+		if actor in self.films[film][1]:
 			return True
 		else:
 			return False 
