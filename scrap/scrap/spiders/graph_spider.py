@@ -33,16 +33,17 @@ class GraphSpider(scrapy.Spider):
 		self.logger.info(name)
 		# start the graph by adding one empty actor to the actor dictionary 
 		self.graph.new_actor(code, name)
-		#yield scrapy.Request('http://m.imdb.com%s' % name_code, callback=self.parse_actor, meta={'code':code})
+		yield scrapy.Request('http://m.imdb.com%s' % name_code, callback=self.parse_actor, meta={'code':code})
 
 	# takes an actor's page and scrapes the top films there 
 	def parse_actor(self, response):
 		self.logger.info(response.css('title').get())
-		title_codes = response.xpath('//a[contains(@href,"/title/tt")]/@href').getall()
-		titles = response.xpath('//a[contains(@href,"/title/tt")]/text()').getall()
+		# these refs work but I'm not sure they're optimal 
+		title_codes = response.xpath('//div[@class="text-center filmo-caption"]/small[@class="ellipse"]/a[@href]/@href').getall()
+		titles = response.xpath('//div[@class="text-center filmo-caption"]/small[@class="ellipse"]/a[@href]/text()').getall()
 		# add titles to the dictionary here 
 		# the number of titles per person should be variable, the user could input how many they want
-		for i in range(0, 10, 2):
+		for i in range(0, 5):
 			entry_code = re.sub('title/', '', title_codes[i].strip('/'))
 			self.graph.add_film_to_actor(response.meta['code'], entry_code)
 			# first need to check whether titles are already in the graph
@@ -56,9 +57,9 @@ class GraphSpider(scrapy.Spider):
 
 	def parse_film(self, response):
 		self.logger.info(response.css('title').get())
-		name_codes = response.xpath('//a[contains(@href,"/name/nm")]/@href').getall()
-		names = response.xpath('//a[contains(@href,"/name/nm")]/text()').getall()
-		for i in range(0, 12, 2):
+		name_codes = response.xpath('//div[@class="ellipse"]/small/a/@href').getall()
+		names = response.xpath('//div[@class="ellipse"]/small/a/strong/text()').getall()
+		for i in range(0, 6):
 			entry_code = re.sub('name/', '', name_codes[i].strip('/'))
 			if not self.graph.graph_contains(name_codes[i], True):
 				self.graph.new_actor(entry_code, names[i])

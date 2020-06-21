@@ -1,7 +1,222 @@
 Actors: {
+    "nm0000140": [
+        "Michael Douglas", 
+        [
+            "tt0098621"
+        ]
+    ], 
+    "nm0366389": [
+        "Kevin Hart", 
+        [
+            "tt7975244"
+        ]
+    ], 
+    "nm0000550": [
+        "Kate Mulgrew", 
+        [
+            "tt0094142"
+        ]
+    ], 
+    "nm0001110": [
+        "Embeth Davidtz", 
+        [
+            "tt0117008"
+        ]
+    ], 
+    "nm0000276": [
+        "Sean Astin", 
+        [
+            "tt0098621"
+        ]
+    ], 
+    "nm0265582": [
+        "Heather Fairfield", 
+        [
+            "tt0098621"
+        ]
+    ], 
+    "nm0000686": [
+        "Christopher Walken", 
+        [
+            "tt0103776"
+        ]
+    ], 
+    "nm2394794": [
+        "Karen Gillan", 
+        [
+            "tt7975244"
+        ]
+    ], 
+    "nm0000607": [
+        "Paul Reubens", 
+        [
+            "tt0117008"
+        ]
+    ], 
+    "nm0933798": [
+        "Mara Wilson", 
+        [
+            "tt0117008"
+        ]
+    ], 
+    "nm0000201": [
+        "Michelle Pfeiffer", 
+        [
+            "tt0103776"
+        ]
+    ], 
+    "nm0002114": [
+        "Kim Greist", 
+        [
+            "tt0094142"
+        ]
+    ], 
+    "nm0425005": [
+        "Dwayne Johnson", 
+        [
+            "tt7975244"
+        ]
+    ], 
+    "nm0085312": [
+        "Jack Black", 
+        [
+            "tt7975244"
+        ]
+    ], 
+    "nm0000678": [
+        "Kathleen Turner", 
+        [
+            "tt0098621"
+        ]
+    ], 
+    "nm0845270": [
+        "Marianne S\u00e4gebrecht", 
+        [
+            "tt0098621"
+        ]
+    ], 
+    "nm0000345": [
+        "Billy Crystal", 
+        [
+            "tt0094142"
+        ]
+    ], 
+    "nm0001284": [
+        "Michael Gough", 
+        [
+            "tt0103776"
+        ]
+    ], 
     "nm0000362": [
         "Danny DeVito", 
-        []
+        [
+            "tt0103776"
+        ]
+    ], 
+    "nm0001649": [
+        "Anne Ramsey", 
+        [
+            "tt0094142"
+        ]
+    ], 
+    "nm5377144": [
+        "Awkwafina", 
+        [
+            "tt7975244"
+        ]
+    ], 
+    "nm0000474": [
+        "Michael Keaton", 
+        [
+            "tt0103776"
+        ]
+    ], 
+    "nm0614526": [
+        "Michael Murphy", 
+        [
+            "tt0103776"
+        ]
+    ], 
+    "nm0274913": [
+        "Pam Ferris", 
+        [
+            "tt0117008"
+        ]
+    ], 
+    "nm0550364": [
+        "Branford Marsalis", 
+        [
+            "tt0094142"
+        ]
+    ], 
+    "nm0674231": [
+        "Rhea Perlman", 
+        [
+            "tt0117008"
+        ]
+    ], 
+    "nm2679917": [
+        "Nick Jonas", 
+        [
+            "tt7975244"
+        ]
     ]
 }
-Films: {}
+Films: {
+    "tt7975244": [
+        " Jumanji: The Next Level\n", 
+        [
+            "nm0000362", 
+            "nm0425005", 
+            "nm0366389", 
+            "nm0085312", 
+            "nm2394794", 
+            "nm5377144", 
+            "nm2679917"
+        ]
+    ], 
+    "tt0117008": [
+        " Matilda\n", 
+        [
+            "nm0000362", 
+            "nm0933798", 
+            "nm0674231", 
+            "nm0001110", 
+            "nm0274913", 
+            "nm0000607"
+        ]
+    ], 
+    "tt0094142": [
+        " Throw Momma from the Train\n", 
+        [
+            "nm0000362", 
+            "nm0000345", 
+            "nm0002114", 
+            "nm0001649", 
+            "nm0000550", 
+            "nm0550364"
+        ]
+    ], 
+    "tt0098621": [
+        " The War of the Roses\n", 
+        [
+            "nm0000362", 
+            "nm0000140", 
+            "nm0000678", 
+            "nm0845270", 
+            "nm0000276", 
+            "nm0265582"
+        ]
+    ], 
+    "tt0103776": [
+        " Batman Returns\n", 
+        [
+            "nm0000362", 
+            "nm0000474", 
+            "nm0000201", 
+            "nm0000686", 
+            "nm0001284", 
+            "nm0614526"
+        ]
+    ]
+}
