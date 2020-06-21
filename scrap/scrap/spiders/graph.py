@@ -33,6 +33,19 @@ class Graph:
 			else:
 				return False
 
+	# do we use these assuming the actor or film already exists, or should we double check that they do?
+	# I feel like we can assume that they exist given the context in which we use them 	
+	def actor_contains(self, actor, film):
+		if film in self.actors[actor]:
+			return True
+		else:
+			return False 
+
+	def film_contains(self, film, actor):
+		if actor in self.films[film]:
+			return True
+		else:
+			return False 
 
 	def write_graph_to_file(self, filename):
 		f = open(filename, "w")
