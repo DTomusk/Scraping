@@ -2,6 +2,7 @@ import scrapy
 import os.path
 import os 
 import re
+import plot
 from graph import Graph
 from scrapy import signals
 from scrapy import Spider
@@ -92,8 +93,10 @@ class GrowSpider(scrapy.Spider):
 	def spider_closed(self, spider):
 		spider.logger.info('Spider closed')
 		self.graph.write_graph_to_file(self.a_file, self.f_file)
-		#plot.plot_graph(self.graph)
+		plot.plot_graph(self.graph)
 
 
 # the graph could scale nodes in terms of popularity, both for films and actors 
 # need to create a user interface that calls these methods so the user doesn't have to all the time
+# CLI takes two arguments for names and title even though lots of names and titles have more than two words
+# CLI should take one argument and break it up accoridingly if need be 

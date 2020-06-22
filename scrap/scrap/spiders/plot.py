@@ -11,7 +11,7 @@ def plot_graph(data):
 	for film in data.films:
 		for actor in data.films[film][1]:
 			G.add_edge(data.films[film][0], data.actors[actor][0])
-	nx.draw_networkx(G, with_labels=True)
+	nx.draw_networkx(G, with_labels=False)
 	print("Graph nodes: ")
 	print(G.nodes())
 	print("Graph edges: ")
