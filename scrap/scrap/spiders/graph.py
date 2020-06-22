@@ -39,12 +39,12 @@ class Graph:
 			for actor in self.actors:
 				if self.actors[actor][0] == name:
 					return actor
-			return False
+			raise Exception("Graph does not contain %s" % name)
 		else:
 			for film in self.films:
 				if self.films[film][0] == name:
 					return film
-			return False
+			raise Exception("Graph does not contain %s" % name)
 
 	# do we use these assuming the actor or film already exists, or should we double check that they do?
 	# I feel like we can assume that they exist given the context in which we use them 	

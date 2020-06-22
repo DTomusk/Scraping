@@ -1,5 +1,6 @@
 import scrapy 
 import os.path
+import os 
 import re
 from graph import Graph
 from scrapy import signals
@@ -12,7 +13,10 @@ class GrowSpider(scrapy.Spider):
 	f_file = "film_database.json"
 
 	def start_requests(self):
-		# if file exists append if not create 
+		# option for starting afresh  
+		if self.arg3 == "n":
+			os.remove(self.a_file)
+			os.remove(self.f_file)
 		if os.path.isfile(self.a_file):
 			self.graph = Graph.load_graph(self.a_file, self.f_file)
 			if self.arg3 == "a":
@@ -25,7 +29,7 @@ class GrowSpider(scrapy.Spider):
 			elif self.arg3 == "f":
 				try:
 				 	extension = self.graph.contains_name(self.arg1 + " " + self.arg2, False)
-					yield scrapy.Request('http://m.imdb.com/name/%s' % extension, callback=self.parse_film, meta={'code':extension})
+					yield scrapy.Request('http://m.imdb.com/title/%s' % extension, callback=self.parse_film, meta={'code':extension})
 				except Exception as e:
 				 	self.logger.error("Couldn't find film")
 			else:
@@ -46,18 +50,36 @@ class GrowSpider(scrapy.Spider):
 	# parses the page for a given actor by adding their top movies to their entry and adding them to the entry of the movie 
 	def parse_actor(self, response):
 		# extensions are what's added to the url to get a certain film
+		name_code = response.meta['code']
 		title_extensions = response.xpath('//div[@class="text-center filmo-caption"]/small[@class="ellipse"]/a[@href]/@href').getall()
 		titles = response.xpath('//div[@class="text-center filmo-caption"]/small[@class="ellipse"]/a[@href]/text()').getall()
 
 		for i, title_extension in enumerate(title_extensions):
 			title_code = re.sub('title/', '', title_extension.strip('/'))
 			title = re.sub('\n', '', titles[i].strip())
-			self.graph.new_film(title_code, title)
-			self.graph.add_film_to_actor(response.meta['code'], title_code)
-			self.graph.add_actor_to_film(title_code, response.meta['code'])
+			if not self.graph.contains_code(title_code, False):
+				self.graph.new_film(title_code, title)
+			if not self.graph.actor_contains(name_code, title_code):
+				self.graph.add_film_to_actor(name_code, title_code)
+			if not self.graph.film_contains(title_code, name_code):
+				self.graph.add_actor_to_film(title_code, name_code)
 			
+	# parse actor and parse film behave pretty much identically, they just have different requests 
+	# ideally the two could be refactored down to one function 
 	def parse_film(self, response):
-		pass
+		title_code = response.meta['code']
+		name_extensions = response.xpath('//div[@class="ellipse"]/small/a/@href').getall()
+		names = response.xpath('//div[@class="ellipse"]/small/a/strong/text()').getall()
+
+		for i, name_extension in enumerate(name_extensions):
+			name_code = re.sub('name/', '', name_extension.strip('/'))
+			name = re.sub('\n', '', names[i].strip())
+			if not self.graph.contains_code(name_code, True):
+				self.graph.new_actor(name_code, name)
+			if not self.graph.actor_contains(name_code, title_code):
+				self.graph.add_film_to_actor(name_code, title_code)
+			if not self.graph.film_contains(title_code, name_code):
+				self.graph.add_actor_to_film(title_code, name_code)
 
 	# copied from documentation 
 	@classmethod
@@ -71,3 +93,7 @@ class GrowSpider(scrapy.Spider):
 		spider.logger.info('Spider closed')
 		self.graph.write_graph_to_file(self.a_file, self.f_file)
 		#plot.plot_graph(self.graph)
+
+
+# the graph could scale nodes in terms of popularity, both for films and actors 
+# need to create a user interface that calls these methods so the user doesn't have to all the time
