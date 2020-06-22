@@ -21,7 +21,7 @@ class Graph:
 	def add_film_to_actor(self, actor, film):
 		self.actors[actor][1].append(film)
 
-	def graph_contains(self, code, actor):
+	def contains_code(self, code, actor):
 		if actor: 
 			if code in self.actors:
 				return True
@@ -32,6 +32,19 @@ class Graph:
 				return True
 			else:
 				return False
+
+	# linear search, very inefficient but what are you gonna do? 
+	def contains_name(self, name, actor):
+		if actor:
+			for actor in self.actors:
+				if self.actors[actor][0] == name:
+					return actor
+			return False
+		else:
+			for film in self.films:
+				if self.films[film][0] == name:
+					return film
+			return False
 
 	# do we use these assuming the actor or film already exists, or should we double check that they do?
 	# I feel like we can assume that they exist given the context in which we use them 	
@@ -47,18 +60,30 @@ class Graph:
 		else:
 			return False 
 
-	def write_graph_to_file(self, filename):
-		f = open(filename, "w")
+	def write_graph_to_file(self, a_file, f_file):
+		f = open(a_file, "w")
 		actor_json = json.dumps(self.actors, indent=4)
-		film_json = json.dumps(self.films, indent=4)
-
-		f.write("Actors: ")
-		f.write(actor_json+"\n")
-		f.write("Films: ")
-		f.write(film_json)
-
+		f.write(actor_json)
 		f.close()
 
+		f = open(f_file, "w")
+		film_json = json.dumps(self.films, indent=4)
+		f.write(film_json)
+		f.close()
+
+	@staticmethod 
+	def load_graph(a_file, f_file):
+		graph = Graph()
+
+		with open(a_file) as file:
+			actors = json.load(file)
+
+		with open(f_file) as file:
+			films = json.load(file)
+
+		graph.actors = actors
+		graph.films = films
+		return graph
 
 # if we kept actors and films in order that could make accessing easier
 # or perhaps we could use a hash map of some sort (dictionary)

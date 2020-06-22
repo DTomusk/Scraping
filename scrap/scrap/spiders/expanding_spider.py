@@ -8,13 +8,28 @@ from scrapy import Spider
 # this spider looks at one film or person at a time, it can be called multiple times to grow the graph
 class GrowSpider(scrapy.Spider):
 	name = "grow"
-	filename = "database.json"
+	a_file = "actor_database.json"
+	f_file = "film_database.json"
 
 	def start_requests(self):
 		# if file exists append if not create 
-		if os.path.isfile(self.filename):
-			# find the entry corresponding to the cl arguments 
-			pass
+		if os.path.isfile(self.a_file):
+			self.graph = Graph.load_graph(self.a_file, self.f_file)
+			if self.arg3 == "a":
+				# check that actor exists and go to parse actor 
+				try:
+				 	extension = self.graph.contains_name(self.arg1 + " " + self.arg2, True)
+					yield scrapy.Request('http://m.imdb.com/name/%s' % extension, callback=self.parse_actor, meta={'code':extension})
+				except Exception as e:
+				 	self.logger.error("Couldn't find actor")
+			elif self.arg3 == "f":
+				try:
+				 	extension = self.graph.contains_name(self.arg1 + " " + self.arg2, False)
+					yield scrapy.Request('http://m.imdb.com/name/%s' % extension, callback=self.parse_film, meta={'code':extension})
+				except Exception as e:
+				 	self.logger.error("Couldn't find film")
+			else:
+				self.logger.error("Invalid arg3 option, must be a or f")
 		else:
 			# creates a new graph and parses the first actor 
 			self.graph = Graph()
@@ -54,5 +69,5 @@ class GrowSpider(scrapy.Spider):
 	# saves graph to file when spider closes 
 	def spider_closed(self, spider):
 		spider.logger.info('Spider closed')
-		self.graph.write_graph_to_file(self.filename)
+		self.graph.write_graph_to_file(self.a_file, self.f_file)
 		#plot.plot_graph(self.graph)
