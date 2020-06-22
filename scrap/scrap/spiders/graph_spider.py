@@ -13,7 +13,8 @@ import re
 
 class GraphSpider(scrapy.Spider):
 	name = "graph"
-	query_limit = 200
+	# limit the number of requests the spider can make, or else it would keep going forever 
+	query_limit = 500
 	# starts off by searching for the actor given
 	def start_requests(self):
 		self.graph = Graph()
@@ -24,7 +25,7 @@ class GraphSpider(scrapy.Spider):
 		# name_code is the url extension to imdb that brings up the actor's page 
 		# this grabs the first name on the search page, which should be the actor we're looking for
 		name_code = response.xpath('//a[contains(@href,"/name/nm")]/@href').get()
-		# this should work but I don't think it's the best request to make 
+		# this works but I don't think it's the best request to make 
 		name = response.xpath('//div[@class="media-body media-vertical-align"]/span[@class="h3"]/text()').get()
 		name = re.sub('\n', '', name)
 		# this only contains the numerical part of the code but is still a string 
@@ -45,14 +46,17 @@ class GraphSpider(scrapy.Spider):
 			titles = response.xpath('//div[@class="text-center filmo-caption"]/small[@class="ellipse"]/a[@href]/text()').getall()
 			# add titles to the dictionary here 
 			# the number of titles per person should be variable, the user could input how many they want
-			for i in range(0, 4):
+			for i in range(0, 5):
 				entry_code = re.sub('title/', '', title_codes[i].strip('/'))
 				self.graph.add_film_to_actor(response.meta['code'], entry_code)
 				# first need to check whether titles are already in the graph
 				if self.graph.graph_contains(title_codes[i], False):
-					pass
+					# not sure this does anything 
+					self.graph.add_actor_to_film(entry_code, response.meta['code'])
 				else:
-					self.graph.new_film(entry_code, titles[i])
+					title = re.sub('\n', '', titles[i].strip())
+					self.logger.info(title)
+					self.graph.new_film(entry_code, title)
 					self.graph.add_actor_to_film(entry_code, response.meta['code'])
 					self.query_limit -= 1
 					yield scrapy.Request('http://m.imdb.com%s' % title_codes[i], callback=self.parse_film, meta={'code':entry_code})
@@ -62,7 +66,7 @@ class GraphSpider(scrapy.Spider):
 			self.logger.info(response.css('title').get())
 			name_codes = response.xpath('//div[@class="ellipse"]/small/a/@href').getall()
 			names = response.xpath('//div[@class="ellipse"]/small/a/strong/text()').getall()
-			for i in range(0, 4):
+			for i in range(0, 5):
 				entry_code = re.sub('name/', '', name_codes[i].strip('/'))
 				if not self.graph.graph_contains(name_codes[i], True):
 					self.graph.new_actor(entry_code, names[i])
@@ -71,6 +75,8 @@ class GraphSpider(scrapy.Spider):
 						self.graph.add_actor_to_film(response.meta['code'], entry_code)
 					self.query_limit -= 1
 					yield scrapy.Request('http://m.imdb.com%s' % name_codes[i], callback=self.parse_actor, meta={'code':entry_code})
+				else:
+					self.graph.add_film_to_actor(entry_code, response.meta['code'])
 
 	# copied from documentation 
 	@classmethod
