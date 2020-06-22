@@ -1,5 +1,6 @@
 import networkx as nx 
 import matplotlib.pyplot as plt
+import plotly.graph_objects as go 
 
 def plot_graph(data):
 	G = nx.Graph()
@@ -23,10 +24,40 @@ def plot_graph(data):
 	nx.draw_networkx_nodes(G, pos, nodelist=film_nodes, node_color='b', node_size=50, linewidths=0.1, edgecolors='k')
 	nx.draw_networkx_edges(G, pos)
 
+	edge_x = []
+	edge_y = []
+
+	fig = go.Figure()
+
+	for edge in G.edges():
+		print(edge)
+		print(pos[edge[0]])
+		print(pos[edge[0]][0])
+		print(pos[edge[1]])
+		edge_x.append(pos[edge[0]][0])
+		edge_x.append(pos[edge[0]][1])
+		edge_x.append(None)
+		edge_y.append(pos[edge[1]][0])
+		edge_y.append(pos[edge[1]][1])
+		edge_y.append(None)
+
+	edge_trace = go.Scatter(x=edge_x, y=edge_y, line=dict(width=0.5, color='#888'), hoverinfo='none', mode='lines')
+
+	node_x = []
+	node_y = []
+
+	for node in G.nodes():
+		x, y = pos[node]
+		node_x.append(x)
+		node_y.append(y)
+
+	node_trace = go.Scatter(x=node_x, y=node_y, mode='markers', marker=dict(size=10))
+	
+	#print(edge_trace)
+
+	fig = go.Figure(data=[edge_trace, node_trace], layout=go.Layout(title=go.layout.Title(text="Actors and films and such")))
+
+	fig.show()
+
 	#nx.draw_networkx(G, with_labels=False)
-	print("Graph nodes: ")
-	print(G.nodes())
-	print("Graph edges: ")
-	print(G.edges())
-	plt.savefig("my_plot.png")
-	plt.show()
+	#plt.show()
