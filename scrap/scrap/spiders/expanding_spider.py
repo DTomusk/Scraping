@@ -15,30 +15,33 @@ class GrowSpider(scrapy.Spider):
 
 	def start_requests(self):
 		# option for starting afresh  
-		if self.arg3 == "n":
+		if self.arg2 == "n":
 			os.remove(self.a_file)
 			os.remove(self.f_file)
 		if os.path.isfile(self.a_file):
 			self.graph = Graph.load_graph(self.a_file, self.f_file)
-			if self.arg3 == "a":
+			if self.arg2 == "a":
 				# check that actor exists and go to parse actor 
 				try:
-				 	extension = self.graph.contains_name(self.arg1 + " " + self.arg2, True)
+					print(self.arg1)
+				 	extension = self.graph.contains_name(self.arg1, True)
+				 	print(extension)
 					yield scrapy.Request('http://m.imdb.com/name/%s' % extension, callback=self.parse_actor, meta={'code':extension})
 				except Exception as e:
 				 	self.logger.error("Couldn't find actor")
-			elif self.arg3 == "f":
+			elif self.arg2 == "f":
 				try:
-				 	extension = self.graph.contains_name(self.arg1 + " " + self.arg2, False)
+				 	extension = self.graph.contains_name(self.arg1, False)
 					yield scrapy.Request('http://m.imdb.com/title/%s' % extension, callback=self.parse_film, meta={'code':extension})
 				except Exception as e:
 				 	self.logger.error("Couldn't find film")
 			else:
-				self.logger.error("Invalid arg3 option, must be a or f")
+				self.logger.error("Invalid arg2 option, must be a or f")
 		else:
 			# creates a new graph and parses the first actor 
 			self.graph = Graph()
-			yield scrapy.Request('http://m.imdb.com/find?q=%s+%s&ref_=nv_sr_sm' % (self.arg1, self.arg2))
+			query = re.sub(' ', '+', self.arg1)
+			yield scrapy.Request('http://m.imdb.com/find?q=%s&ref_=nv_sr_sm' % self.arg1)
 
 	# parse is the initial step, it searches for the first actor and yields their page 
 	def parse(self, response):
