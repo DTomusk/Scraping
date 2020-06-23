@@ -53,6 +53,9 @@ class GrowSpider(scrapy.Spider):
 
 	# parses the page for a given actor by adding their top movies to their entry and adding them to the entry of the movie 
 	def parse_actor(self, response):
+		# add extra details about the actor here 
+
+
 		# extensions are what's added to the url to get a certain film
 		name_code = response.meta['code']
 		title_extensions = response.xpath('//div[@class="text-center filmo-caption"]/small[@class="ellipse"]/a[@href]/@href').getall()
@@ -71,6 +74,8 @@ class GrowSpider(scrapy.Spider):
 	# parse actor and parse film behave pretty much identically, they just have different requests 
 	# ideally the two could be refactored down to one function 
 	def parse_film(self, response):
+		# add extra details about the movie here 
+
 		title_code = response.meta['code']
 		name_extensions = response.xpath('//div[@class="ellipse"]/small/a/@href').getall()
 		names = response.xpath('//div[@class="ellipse"]/small/a/strong/text()').getall()

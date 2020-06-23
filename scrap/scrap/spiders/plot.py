@@ -9,10 +9,6 @@ def plot_graph(data):
 			G.add_node(data.films[film]["title"])
 			G.add_edge(data.actors[actor]["name"], data.films[film]["title"])
 
-	for film in data.films:
-		for actor in data.films[film]["actors"]:
-			G.add_edge(data.films[film]["title"], data.actors[actor]["name"])
-
 	pos = nx.spring_layout(G)
 
 	edge_x = []
@@ -22,18 +18,21 @@ def plot_graph(data):
 
 	# this part is really screwing up, the lines just don't come out right 
 	for edge in G.edges():
-		edge_x.append(pos[edge[0]][0])
-		edge_x.append(pos[edge[0]][1])
-		edge_x.append(None)
-		edge_y.append(pos[edge[1]][0])
-		edge_y.append(pos[edge[1]][1])
-		edge_y.append(None)
+		print(pos[edge[0]])
+		print(pos[edge[1]])
+		x1, y1 = pos[edge[0]]
+		x2, y2 = pos[edge[1]]
+		edge_x.append(x1)
+		edge_x.append(x2)
+		edge_y.append(y1)
+		edge_y.append(y2)
 
 	edge_trace = go.Scatter(x=edge_x, y=edge_y, line=dict(width=0.5, color='#888'), hoverinfo='none', mode='lines')
 
 	node_x = []
 	node_y = []
 
+	# this works well, the edges part doesn't 
 	for node in G.nodes():
 		x, y = pos[node]
 		node_x.append(x)
