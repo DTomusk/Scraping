@@ -59,7 +59,7 @@ class GrowSpider(scrapy.Spider):
 		height = re.search('\(.*', height).group(0)
 		height = height.strip("()")
 
-		starsign = response.xpath('//section[@id="did-you-know"]/p/text()').getall()[1]
+		starsign = response.xpath('//section[@id="did-you-know"]/p/text()').getall()[-1]
 
 		yob = int(re.search('\d\d\d\d', response.xpath('//time/text()').get()).group(0))
 
@@ -69,8 +69,12 @@ class GrowSpider(scrapy.Spider):
 		
 		title_extensions = response.xpath('//div[@class="text-center filmo-caption"]/small[@class="ellipse"]/a[@href]/@href').getall()
 		titles = response.xpath('//div[@class="text-center filmo-caption"]/small[@class="ellipse"]/a[@href]/text()').getall()
+		types = response.xpath('//div[@id="filmo-scroller"]/ul/li/div[@class="filmo-title"]/span/text()').getall()
 
 		for i, title_extension in enumerate(title_extensions):
+			# check first whether a title is a tv series or a film, only add films 
+			if "Archive footage" in types[i]:
+				break
 			title_code = re.sub('title/', '', title_extension.strip('/'))
 			title = re.sub('\n', '', titles[i].strip())
 			if not self.graph.contains_code(title_code, False):
