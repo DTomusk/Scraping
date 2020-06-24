@@ -53,11 +53,17 @@ class GrowSpider(scrapy.Spider):
 
 	# parses the page for a given actor by adding their top movies to their entry and adding them to the entry of the movie 
 	def parse_actor(self, response):
+		name_code = response.meta['code']
 		# add extra details about the actor here 
-
+		height = response.xpath('//section[@id="personal-details"]/span/text()').get()
+		height = re.search('\(.*', height).group(0)
+		height = height.strip("()")
+		starsign = "Hello"
+		yob = 1990
+		self.graph.add_actor_data(name_code, yob, height, starsign)
 
 		# extensions are what's added to the url to get a certain film
-		name_code = response.meta['code']
+		
 		title_extensions = response.xpath('//div[@class="text-center filmo-caption"]/small[@class="ellipse"]/a[@href]/@href').getall()
 		titles = response.xpath('//div[@class="text-center filmo-caption"]/small[@class="ellipse"]/a[@href]/text()').getall()
 

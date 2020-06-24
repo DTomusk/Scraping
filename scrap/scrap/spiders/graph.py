@@ -16,6 +16,14 @@ class Graph:
 	def new_film(self, code, title):
 		self.films[code] = {"title": title, "actors": []}
 
+	def add_actor_data(self, code, yob, height, starsign):
+		self.actors[code]['age'] = 2020 - yob
+		self.actors[code]['height'] = height
+		self.actors[code]['star sign'] = starsign 
+
+	def add_film_data():
+		pass
+
 	# here we need to find the right entry and append the code to its list
 	def add_actor_to_film(self, film, actor):
 		# the dictionary stores keys as codes and values as lists of other codes
