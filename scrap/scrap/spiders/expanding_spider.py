@@ -58,8 +58,11 @@ class GrowSpider(scrapy.Spider):
 		height = response.xpath('//section[@id="personal-details"]/span/text()').get()
 		height = re.search('\(.*', height).group(0)
 		height = height.strip("()")
-		starsign = "Hello"
-		yob = 1990
+
+		starsign = response.xpath('//section[@id="did-you-know"]/p/text()').getall()[1]
+
+		yob = int(re.search('\d\d\d\d', response.xpath('//time/text()').get()).group(0))
+
 		self.graph.add_actor_data(name_code, yob, height, starsign)
 
 		# extensions are what's added to the url to get a certain film
