@@ -21,8 +21,9 @@ class Graph:
 		self.actors[code]['height'] = height
 		self.actors[code]['star sign'] = starsign 
 
-	def add_film_data():
-		pass
+	def add_film_data(self, code, gross, rating):
+		self.films[code]['gross'] = gross
+		self.films[code]['rating'] = rating
 
 	# here we need to find the right entry and append the code to its list
 	def add_actor_to_film(self, film, actor):

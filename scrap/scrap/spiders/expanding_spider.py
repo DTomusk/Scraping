@@ -75,6 +75,9 @@ class GrowSpider(scrapy.Spider):
 			# check first whether a title is a tv series or a film, only add films 
 			if "Archive footage" in types[i]:
 				break
+			# limit the number of films, selects on most recent and a couple best known 
+			if i > 15:
+				break
 			title_code = re.sub('title/', '', title_extension.strip('/'))
 			title = re.sub('\n', '', titles[i].strip())
 			if not self.graph.contains_code(title_code, False):
@@ -88,10 +91,18 @@ class GrowSpider(scrapy.Spider):
 	# ideally the two could be refactored down to one function 
 	def parse_film(self, response):
 		# add extra details about the movie here 
-
 		title_code = response.meta['code']
+
+		gross = response.xpath('//div[@class="col-xs-12"]/section[contains(h2, "Box Office")]/section/p/text()').getall()[-1]
+		gross = re.sub("\n", "", gross)
+		gross = re.sub(" ", "", gross)
+
+		rating = response.xpath('//span[@class="inline-block text-left vertically-middle"]/text()').get()
+
 		name_extensions = response.xpath('//div[@class="ellipse"]/small/a/@href').getall()
 		names = response.xpath('//div[@class="ellipse"]/small/a/strong/text()').getall()
+
+		self.graph.add_film_data(title_code, gross, rating)
 
 		for i, name_extension in enumerate(name_extensions):
 			name_code = re.sub('name/', '', name_extension.strip('/'))
